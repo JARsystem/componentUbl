@@ -1,0 +1,131 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.jar.ubl</groupId>
+        <artifactId>facturador-jar-main</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>		
+
+	<groupId>com.jar.ubl</groupId>
+    <artifactId>facturador-jars-generaxml</artifactId>
+    <version>1.0</version>
+    <name>Facturador - Servicio Generador de XML</name>
+
+    <properties>
+		<spring.version>4.2.2.RELEASE</spring.version>
+        <slf4j.version>1.7.7</slf4j.version>
+        <java.version>1.8</java.version>
+    </properties>
+
+    <dependencies>
+	
+        <dependency>
+            <groupId>com.jar.ubl</groupId>
+            <artifactId>facturador-jars-ubl21</artifactId>
+            <version>1.0</version>
+        </dependency>	
+	
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.0.2</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+			   <configuration>
+				   <encoding>Cp1252</encoding>
+			   </configuration> 
+			</plugin>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <profiles>
+        <profile>
+            <id>Produccion</id>
+            <activation>
+                <property>
+                    <name>Produccion</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.7</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                        <copy file="./conf/logback_prod.xml"
+                                              tofile="target/conf/logback.xml"/>
+                                        <echo>SE ESTA PONIENDO EL LOG4J DE PRODUCCION
+                                        </echo>
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>2.7</version>
+                        <executions>
+                            <execution>
+                                <id>copy-external-resources</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/conf</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.basedir}/conf</directory>
+                                            <excludes>
+                                                <exclude>**/logback_dev.xml</exclude>
+                                                <exclude>**/logback_prod.xml</exclude>
+                                            </excludes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>
